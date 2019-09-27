@@ -7,36 +7,38 @@ import java.util.List;
 import java.util.Map;
 
 public class HTTPResponse {
+	
+	private HTTPResponseStatus status;
+	private String version;
+	private String content;
+	private Map<String, String> parameters;
+	
 	public HTTPResponse() {
 	}
 
 	public HTTPResponseStatus getStatus() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.status;
 	}
 
 	public void setStatus(HTTPResponseStatus status) {
 	}
 
 	public String getVersion() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.version;
 	}
 
 	public void setVersion(String version) {
 	}
 
 	public String getContent() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.content;
 	}
 
 	public void setContent(String content) {
 	}
 
 	public Map<String, String> getParameters() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.parameters;
 	}
 
 	public String putParameter(String name, String value) {
