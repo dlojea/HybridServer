@@ -10,7 +10,7 @@ public class HTTPRequest {
 	
 	private HTTPRequestMethod method;
 	private String resourceChain;
-	private String [] resourcePath;
+	private String [] resourcePath = {};
 	private String resourceName;
 	private Map<String, String> resourceParameters = new LinkedHashMap<>();
 	private String httpVersion;
@@ -30,9 +30,12 @@ public class HTTPRequest {
 		
 		String [] resource = this.resourceChain.split("\\?");
 		this.resourceName = resource[0].substring(1);
-		this.resourcePath = this.resourceName.split("/");
+		if (!this.resourceName.equals("")) {
+			this.resourcePath = this.resourceName.split("/");
+		}
 		
 		if (resource[0] != this.resourceChain) {
+			
 			String[] resourceParameters = resource[1].split("&");
 			for (int i = 0; i < resourceParameters.length; i++) {
 				String[] parameter = resourceParameters[i].split("=");
@@ -51,9 +54,6 @@ public class HTTPRequest {
 			String value = headerParameters[1].trim();
 			
 			this.headerParameters.put(key, value);
-			
-			System.out.print(key + ": " + value);
-			
 		}	
 	}
 
