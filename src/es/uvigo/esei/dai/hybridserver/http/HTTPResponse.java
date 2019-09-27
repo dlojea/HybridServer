@@ -21,6 +21,7 @@ public class HTTPResponse {
 	}
 
 	public void setStatus(HTTPResponseStatus status) {
+		this.status = status;
 	}
 
 	public String getVersion() {
@@ -28,6 +29,7 @@ public class HTTPResponse {
 	}
 
 	public void setVersion(String version) {
+		this.version = version;
 	}
 
 	public String getContent() {
@@ -35,6 +37,7 @@ public class HTTPResponse {
 	}
 
 	public void setContent(String content) {
+		this.content = content;
 	}
 
 	public Map<String, String> getParameters() {
@@ -42,29 +45,31 @@ public class HTTPResponse {
 	}
 
 	public String putParameter(String name, String value) {
-		// TODO Auto-generated method stub
-		return null;
+		return this.parameters.put(name, value);
 	}
 
 	public boolean containsParameter(String name) {
-		// TODO Auto-generated method stub
-		return false;
+		return this.parameters.containsKey(name);
 	}
 
 	public String removeParameter(String name) {
-		// TODO Auto-generated method stub
-		return null;
+		return this.parameters.remove(name);
 	}
 
 	public void clearParameters() {
+		this.parameters.clear();
 	}
 
 	public List<String> listParameters() {
-		// TODO Auto-generated method stub
-		return null;
+		return (List<String>) this.parameters.values();
 	}
 
 	public void print(Writer writer) throws IOException {
+		
+		writer.write(this.getVersion() + " ");
+		writer.write(String.format("%d", this.getStatus().getCode()) + " ");
+		writer.write(this.getStatus().getStatus());
+		writer.write("\r\n\r\n");
 	}
 
 	@Override
