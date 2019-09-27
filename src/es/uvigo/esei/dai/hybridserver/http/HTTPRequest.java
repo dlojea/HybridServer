@@ -3,7 +3,6 @@ package es.uvigo.esei.dai.hybridserver.http;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -33,15 +32,16 @@ public class HTTPRequest {
 		this.resourceName = resource[0].substring(1);
 		this.resourcePath = this.resourceName.split("/");
 		
-		String [] resourceParameters = resource[1].split("&");
-		
-		for (int i = 0; i < resourceParameters.length; i++) {
-			String [] parameter = resourceParameters[i].split("=");
-			
-			String key = parameter[0];
-			String value = parameter[1];
-			
-			this.resourceParameters.put(key, value);
+		if (resource[0] != this.resourceChain) {
+			String[] resourceParameters = resource[1].split("&");
+			for (int i = 0; i < resourceParameters.length; i++) {
+				String[] parameter = resourceParameters[i].split("=");
+	
+				String key = parameter[0];
+				String value = parameter[1];
+	
+				this.resourceParameters.put(key, value);
+			} 
 		}
 		
 		while (!(line = buffer.readLine()).equals("")) {
@@ -54,8 +54,7 @@ public class HTTPRequest {
 			
 			System.out.print(key + ": " + value);
 			
-		}
-		
+		}	
 	}
 
 	public HTTPRequestMethod getMethod() {
