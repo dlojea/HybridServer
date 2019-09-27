@@ -3,6 +3,7 @@ package es.uvigo.esei.dai.hybridserver.http;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.net.URLDecoder;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -34,19 +35,6 @@ public class HTTPRequest {
 			this.resourcePath = this.resourceName.split("/");
 		}
 		
-		if (resource[0] != this.resourceChain) {
-			
-			String[] resourceParameters = resource[1].split("&");
-			for (int i = 0; i < resourceParameters.length; i++) {
-				String[] parameter = resourceParameters[i].split("=");
-	
-				String key = parameter[0];
-				String value = parameter[1];
-	
-				this.resourceParameters.put(key, value);
-			} 
-		}
-		
 		while (!(line = buffer.readLine()).equals("")) {
 			
 			String [] headerParameters = line.split(":");
@@ -55,6 +43,44 @@ public class HTTPRequest {
 			
 			this.headerParameters.put(key, value);
 		}	
+		
+		switch(this.method) {
+			case GET:
+				if (resource[0] != this.resourceChain) {
+					
+					String[] resourceParameters = resource[1].split("&");
+					for (int i = 0; i < resourceParameters.length; i++) {
+						String[] parameter = resourceParameters[i].split("=");
+			
+						String key = parameter[0];
+						String value = parameter[1];
+			
+						this.resourceParameters.put(key, value);
+					} 
+				}
+				break;
+				
+			case POST:
+				line = buffer.readLine();
+				String decoded = URLDecoder.decode(line, "UTF-8");
+				this.content = decoded;
+				this.contentLength = Integer.parseInt(this.headerParameters.get("Content-Length"));
+				System.out.print(this.content);
+				String[] resourceParameters = decoded.split("&");
+				for (int i = 0; i < resourceParameters.length; i++) {
+					String[] parameter = resourceParameters[i].split("=");
+		
+					String key = parameter[0];
+					String value = parameter[1];
+		
+					this.resourceParameters.put(key, value);
+				} 
+				break;
+			default:
+				break;
+		
+		}
+		
 	}
 
 	public HTTPRequestMethod getMethod() {
