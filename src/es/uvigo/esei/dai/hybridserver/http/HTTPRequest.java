@@ -11,15 +11,20 @@ public class HTTPRequest {
 	
 	private HTTPRequestMethod method;
 	private String resourceChain;
-	private String [] resourcePath = {};
+	private String [] resourcePath;
 	private String resourceName;
-	private Map<String, String> resourceParameters = new LinkedHashMap<>();
+	private Map<String, String> resourceParameters;
 	private String httpVersion;
-	private Map<String, String> headerParameters = new LinkedHashMap<>();
+	private Map<String, String> headerParameters;
 	private String content;
 	private int contentLength;
 	
 	public HTTPRequest(Reader reader) throws IOException, HTTPParseException {
+		
+		resourcePath = new String[0];
+		resourceParameters = new LinkedHashMap<>();
+		headerParameters = new LinkedHashMap<>();
+		
 		BufferedReader buffer = new BufferedReader(reader);
 		
 		String line = buffer.readLine();

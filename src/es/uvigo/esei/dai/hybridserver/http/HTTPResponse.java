@@ -3,6 +3,8 @@ package es.uvigo.esei.dai.hybridserver.http;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +16,7 @@ public class HTTPResponse {
 	private Map<String, String> parameters;
 	
 	public HTTPResponse() {
+		parameters = new LinkedHashMap<>();
 	}
 
 	public HTTPResponseStatus getStatus() {
@@ -38,6 +41,7 @@ public class HTTPResponse {
 
 	public void setContent(String content) {
 		this.content = content;
+		parameters.put("Content-Length", Integer.toString(content.length()));
 	}
 
 	public Map<String, String> getParameters() {
@@ -69,7 +73,20 @@ public class HTTPResponse {
 		writer.write(this.getVersion() + " ");
 		writer.write(String.format("%d", this.getStatus().getCode()) + " ");
 		writer.write(this.getStatus().getStatus());
-		writer.write("\r\n\r\n");
+		writer.write("\r\n");
+		
+		Iterator<String> headers = parameters.keySet().iterator();
+		String key;
+		
+		while (headers.hasNext()) {
+			key = headers.next();
+			writer.write(key + ": " + parameters.get(key) + "\r\n");
+		}
+		
+		writer.write("\r\n");
+		if(this.content != null) {
+			writer.write(this.content);
+		}
 	}
 
 	@Override
