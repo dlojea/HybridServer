@@ -30,9 +30,17 @@ public class HTTPRequest {
 		String line = buffer.readLine();
 		String [] field = line.split(" ");
 		
-		this.method = HTTPRequestMethod.valueOf(field[0]);
-		this.resourceChain = field[1];
-		this.httpVersion = field[2];
+		try {	
+			
+			this.method = HTTPRequestMethod.valueOf(field[0]);
+			this.resourceChain = field[1];
+			this.httpVersion = field[2];
+			
+		} catch (IllegalArgumentException e) {
+			throw new HTTPParseException(e.getLocalizedMessage());
+		} catch (ArrayIndexOutOfBoundsException e) {
+			throw new HTTPParseException(e.getLocalizedMessage());
+		}
 		
 		String [] resource = this.resourceChain.split("\\?");
 		this.resourceName = resource[0].substring(1);
@@ -40,13 +48,17 @@ public class HTTPRequest {
 			this.resourcePath = this.resourceName.split("/");
 		}
 		
-		while (!(line = buffer.readLine()).equals("")) {
-			
-			String [] headerParameters = line.split(":");
-			String key = headerParameters[0].trim();
-			String value = headerParameters[1].trim();
-			
-			this.headerParameters.put(key, value);
+		try {
+			while (!(line = buffer.readLine()).equals("")) {
+				
+				String [] headerParameters = line.split(":");
+				String key = headerParameters[0].trim();
+				String value = headerParameters[1].trim();
+				
+				this.headerParameters.put(key, value);
+			}
+		} catch (ArrayIndexOutOfBoundsException e) {
+			throw new HTTPParseException(e.getLocalizedMessage());
 		}	
 		
 		switch(this.method) {
@@ -70,7 +82,7 @@ public class HTTPRequest {
 				String decoded = URLDecoder.decode(line, "UTF-8");
 				this.content = decoded;
 				this.contentLength = Integer.parseInt(this.headerParameters.get("Content-Length"));
-				System.out.print(this.content);
+				
 				String[] resourceParameters = decoded.split("&");
 				for (int i = 0; i < resourceParameters.length; i++) {
 					String[] parameter = resourceParameters[i].split("=");
