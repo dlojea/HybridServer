@@ -3,7 +3,6 @@ package es.uvigo.esei.dai.hybridserver.http;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,18 +74,16 @@ public class HTTPResponse {
 		writer.write(this.getStatus().getStatus());
 		writer.write("\r\n");
 		
-		Iterator<String> headers = parameters.keySet().iterator();
-		String key;
-		
-		while (headers.hasNext()) {
-			key = headers.next();
+		for (String key: parameters.keySet()) {
 			writer.write(key + ": " + parameters.get(key) + "\r\n");
 		}
 		
 		writer.write("\r\n");
+		
 		if(this.content != null) {
 			writer.write(this.content);
 		}
+		
 		writer.flush();
 	}
 
@@ -97,6 +94,8 @@ public class HTTPResponse {
 		try {
 			this.print(writer);
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 		return writer.toString();

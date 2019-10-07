@@ -34,12 +34,12 @@ public class ServiceThread implements Runnable {
 			
 			HTTPRequestMethod method = request.getMethod();
 			Map<String, String> resourceParameters = request.getResourceParameters();
-			String resource = request.getResourceName();
+			String resourceName = request.getResourceName();
 			String uuid;
 			
 			response.setVersion(HTTPHeaders.HTTP_1_1.getHeader());
 			
-			if(resource.equals("html")) {
+			if(resourceName.equals("html")) {
 				switch (method) {
 					case GET:
 						
@@ -86,7 +86,7 @@ public class ServiceThread implements Runnable {
 					default:
 						break;
 				}
-			} else if (resource.isEmpty()) {
+			} else if (resourceName.isEmpty()) {
 				response.setContent("Hybrid Server");
 				response.setStatus(HTTPResponseStatus.S200);
 		    } else {

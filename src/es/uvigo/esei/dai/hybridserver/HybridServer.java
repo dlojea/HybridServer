@@ -18,7 +18,7 @@ public class HybridServer {
 	private PagesMap pages;
 
 	public HybridServer() {
-		// TODO Auto-generated constructor stub
+		this.pages = new PagesMap();
 	}
 	
 	public HybridServer(Map<String, String> pages) {
