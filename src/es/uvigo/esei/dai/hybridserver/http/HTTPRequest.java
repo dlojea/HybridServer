@@ -61,44 +61,43 @@ public class HTTPRequest {
 			throw new HTTPParseException(e.getLocalizedMessage());
 		}	
 		
-		switch(this.method) {
-			case GET:
-				if (resource[0] != this.resourceChain) {
-					
-					String[] resourceParameters = resource[1].split("&");
-					for (int i = 0; i < resourceParameters.length; i++) {
-						String[] parameter = resourceParameters[i].split("=");
+		if (resource[0] != this.resourceChain) {
 			
-						String key = parameter[0];
-						String value = parameter[1];
-			
-						this.resourceParameters.put(key, value);
-					} 
-				}
-				break;
-				
-			case POST:
-				line = buffer.readLine();
-				String decoded = URLDecoder.decode(line, "UTF-8");
-				this.content = decoded;
-				this.contentLength = Integer.parseInt(this.headerParameters.get("Content-Length"));
-				
-				String[] resourceParameters = decoded.split("&");
-				for (int i = 0; i < resourceParameters.length; i++) {
-					String[] parameter = resourceParameters[i].split("=");
-		
-					String key = parameter[0];
-					String value = parameter[1];
-		
-					this.resourceParameters.put(key, value);
-				} 
-				break;
-			default:
-				break;
-		
+			String[] resourceParameters = resource[1].split("&");
+			for (int i = 0; i < resourceParameters.length; i++) {
+				String[] parameter = resourceParameters[i].split("=");
+	
+				String key = parameter[0];
+				String value = parameter[1];
+	
+				this.resourceParameters.put(key, value);
+			} 
 		}
-		
+				
+		if (this.headerParameters.containsKey("Content-Length")) {
+			
+			this.contentLength = Integer.parseInt(this.headerParameters.get("Content-Length"));
+			
+			char[] array_content = new char[this.contentLength];
+			buffer.read(array_content);
+			String content = new String (array_content);
+			
+			String decoded = URLDecoder.decode(content, "UTF-8");
+			this.content = decoded;
+			
+			String[] resourceParameters = this.content.split("&");
+			for (int i = 0; i < resourceParameters.length; i++) {
+				String[] parameter = resourceParameters[i].split("=");
+	
+				String key = parameter[0];
+				String value = parameter[1];
+	
+				this.resourceParameters.put(key, value);
+			} 
+		}	
 	}
+		
+	
 
 	public HTTPRequestMethod getMethod() {
 		return this.method;

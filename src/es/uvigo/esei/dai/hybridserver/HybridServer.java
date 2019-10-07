@@ -1,10 +1,19 @@
 package es.uvigo.esei.dai.hybridserver;
 
+
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Map;
 import java.util.Properties;
+
+
+import es.uvigo.esei.dai.hybridserver.http.HTTPHeaders;
+import es.uvigo.esei.dai.hybridserver.http.HTTPResponse;
+import es.uvigo.esei.dai.hybridserver.http.HTTPResponseStatus;
+
+
 
 public class HybridServer {
 	private static final int SERVICE_PORT = 8888;
@@ -36,8 +45,15 @@ public class HybridServer {
 						try (Socket socket = serverSocket.accept()) {
 							if (stop) break;
 							
-							// Responder al cliente
-						}
+							HTTPResponse response = new HTTPResponse();
+							
+							response.setContent("Hybrid Server");
+							response.setStatus(HTTPResponseStatus.S200);
+							response.setVersion(HTTPHeaders.HTTP_1_1.getHeader());
+							
+							OutputStream output = socket.getOutputStream();
+							output.write(response.toString().getBytes());
+						}	
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
