@@ -2,16 +2,12 @@ package es.uvigo.esei.dai.hybridserver;
 
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Map;
 import java.util.Properties;
-
-
-import es.uvigo.esei.dai.hybridserver.http.HTTPHeaders;
-import es.uvigo.esei.dai.hybridserver.http.HTTPResponse;
-import es.uvigo.esei.dai.hybridserver.http.HTTPResponseStatus;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 
@@ -19,13 +15,14 @@ public class HybridServer {
 	private static final int SERVICE_PORT = 8888;
 	private Thread serverThread;
 	private boolean stop;
+	private PagesMap pages;
 
 	public HybridServer() {
 		// TODO Auto-generated constructor stub
 	}
 	
 	public HybridServer(Map<String, String> pages) {
-		// TODO Auto-generated constructor stub
+		this.pages = new PagesMap(pages);
 	}
 
 	public HybridServer(Properties properties) {
@@ -41,19 +38,13 @@ public class HybridServer {
 			@Override
 			public void run() {
 				try (final ServerSocket serverSocket = new ServerSocket(SERVICE_PORT)) {
+					ExecutorService threadPool = Executors.newFixedThreadPool(50);
 					while (true) {
-						try (Socket socket = serverSocket.accept()) {
-							if (stop) break;
+						Socket socket = serverSocket.accept();
+						
+						if (stop) break;
+						threadPool.execute(new ServiceThread(socket, pages));							
 							
-							HTTPResponse response = new HTTPResponse();
-							
-							response.setContent("Hybrid Server");
-							response.setStatus(HTTPResponseStatus.S200);
-							response.setVersion(HTTPHeaders.HTTP_1_1.getHeader());
-							
-							OutputStream output = socket.getOutputStream();
-							output.write(response.toString().getBytes());
-						}	
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
