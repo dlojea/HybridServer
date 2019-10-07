@@ -8,11 +8,11 @@ public class PagesMap {
 	
 	Map<String, String> pages;
 	
-	public PagesMap(Map<String, String> pages) {
+	public PagesMap (Map<String, String> pages) {
 		this.pages = pages;
 	}
 	
-	public String getPage(String uuid) {
+	public String getPage (String uuid) {
 		return pages.get(uuid);
 	}
 	
@@ -20,6 +20,16 @@ public class PagesMap {
 		return new ArrayList<>(pages.keySet());	
 	}
 	
+	public boolean containsPage (String uuid) {
+		return pages.containsKey(uuid);
+	}
 	
+	public void putPage (String uuid, String content) {
+		this.pages.put(uuid, content);
+	}
+	
+	public void deletePage(String uuid) {
+		this.pages.remove(uuid);
+	}
 
 }

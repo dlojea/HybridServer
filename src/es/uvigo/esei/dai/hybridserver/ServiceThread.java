@@ -5,10 +5,12 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.Map;
+import java.util.UUID;
 
 import es.uvigo.esei.dai.hybridserver.http.HTTPHeaders;
 import es.uvigo.esei.dai.hybridserver.http.HTTPParseException;
 import es.uvigo.esei.dai.hybridserver.http.HTTPRequest;
+import es.uvigo.esei.dai.hybridserver.http.HTTPRequestMethod;
 import es.uvigo.esei.dai.hybridserver.http.HTTPResponse;
 import es.uvigo.esei.dai.hybridserver.http.HTTPResponseStatus;
 
@@ -30,19 +32,65 @@ public class ServiceThread implements Runnable {
 			HTTPResponse response = new HTTPResponse();
 			System.out.print(request.toString() + "\n");
 			
+			HTTPRequestMethod method = request.getMethod();
 			Map<String, String> resourceParameters = request.getResourceParameters();
-			String uuid = resourceParameters.get("uuid");
+			String resource = request.getResourceName();
+			String uuid;
 			
-			if (uuid == null) {
+			response.setVersion(HTTPHeaders.HTTP_1_1.getHeader());
+			
+			if(resource.equals("html")) {
+				switch (method) {
+					case GET:
+						
+						uuid = resourceParameters.get("uuid");
+						
+						if (uuid == null) {
+							response.setContent(pages.getList().toString());
+							response.setStatus(HTTPResponseStatus.S200);
+						} else {
+							if (pages.containsPage(uuid)) {
+								response.setContent(pages.getPage(uuid));
+								response.setStatus(HTTPResponseStatus.S200);
+							} else {
+								response.setStatus(HTTPResponseStatus.S404);
+							}
+						}
+						break;
+						
+					case POST:
+						
+						uuid = UUID.randomUUID().toString();
+						
+						if (resourceParameters.containsKey("html")) {
+							pages.putPage(uuid, resourceParameters.get("html"));
+							response.setStatus(HTTPResponseStatus.S200);
+							response.setContent("<a href=\"html?uuid="+ uuid +"\">"+ uuid +"</a>");
+						} else {
+							response.setStatus(HTTPResponseStatus.S400);
+						}
+						break;
+						
+					case DELETE:
+						
+						uuid = resourceParameters.get("uuid");
+						
+						if (pages.containsPage(uuid)) {
+							pages.deletePage(uuid);
+							response.setStatus(HTTPResponseStatus.S200);
+						} else {
+							response.setStatus(HTTPResponseStatus.S404);
+						}
+						break;
+						
+					default:
+						break;
+				}
+			} else if (resource.isEmpty()) {
+				response.setContent("Hybrid Server");
 				response.setStatus(HTTPResponseStatus.S200);
-				response.setVersion(HTTPHeaders.HTTP_1_1.getHeader());
-				response.setContent(pages.getList().toString());
-			} else {
-				String content = pages.getPage(uuid);
-				
-				response.setContent(content);
-				response.setStatus(HTTPResponseStatus.S200);
-				response.setVersion(HTTPHeaders.HTTP_1_1.getHeader());
+		    } else {
+				response.setStatus(HTTPResponseStatus.S400);
 			}
 		
 			response.print(new OutputStreamWriter(socket.getOutputStream()));
@@ -55,7 +103,5 @@ public class ServiceThread implements Runnable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
-
 }
