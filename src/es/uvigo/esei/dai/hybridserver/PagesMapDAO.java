@@ -1,15 +1,13 @@
 package es.uvigo.esei.dai.hybridserver;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-public class PagesMap {
+public class PagesMapDAO implements PagesDAO{
 	
 	private Map<String, String> pages;
 	
-	public PagesMap() {
+	public PagesMapDAO() {
 		this.pages = new HashMap<>();
 		
 		String[][] pages = new String[][] {
@@ -30,26 +28,37 @@ public class PagesMap {
 		}
 	}
 	
-	public PagesMap (Map<String, String> pages) {
+	public PagesMapDAO (Map<String, String> pages) {
 		this.pages = pages;
 	}
 	
+	@Override
 	public String getPage (String uuid) {
 		return pages.get(uuid);
 	}
 	
-	public List<String> getList(){
-		return new ArrayList<>(pages.keySet());	
+	@Override
+	public String getList(){
+		String list =  "<ul>";
+		
+		for(String page: pages.keySet()) {
+			list += "<li><a href=\"html?uuid="+ page +"\">"+ page +"</a></li>";
+		}
+		list += "</ul>";
+		return list;	
 	}
 	
+	@Override
 	public boolean containsPage (String uuid) {
 		return pages.containsKey(uuid);
 	}
 	
+	@Override
 	public void putPage (String uuid, String content) {
 		this.pages.put(uuid, content);
 	}
 	
+	@Override
 	public void deletePage(String uuid) {
 		this.pages.remove(uuid);
 	}
