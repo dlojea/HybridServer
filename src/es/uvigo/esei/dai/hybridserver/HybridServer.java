@@ -15,18 +15,30 @@ public class HybridServer {
 	private static final int SERVICE_PORT = 8888;
 	private Thread serverThread;
 	private boolean stop;
-	private PagesMap pages;
+	private PagesDAO pages;
+	private int numClients;
+	private int port;
+	private Properties properties;
 
 	public HybridServer() {
-		this.pages = new PagesMap();
+		//this.pages = new PagesMapDAO();
+		
+		this.numClients = 50;
+		this.port = 8888;
+		this.properties = new Properties();
+		this.properties.put("db.url", "jdbc:mysql://localhost:3306/hstestdb");
+		this.properties.put("db.user", "hsdb");
+		this.properties.put("db.password", "hsdbpass");
 	}
 	
 	public HybridServer(Map<String, String> pages) {
-		this.pages = new PagesMap(pages);
+		this.pages = new PagesMapDAO(pages);
 	}
 
 	public HybridServer(Properties properties) {
-		// TODO Auto-generated constructor stub
+		this.numClients = Integer.parseInt(properties.getProperty("numClients", "50"));
+		this.port = Integer.parseInt(properties.getProperty("port", "8888"));
+		this.properties = properties;
 	}
 
 	public int getPort() {
@@ -37,8 +49,8 @@ public class HybridServer {
 		this.serverThread = new Thread() {
 			@Override
 			public void run() {
-				try (final ServerSocket serverSocket = new ServerSocket(SERVICE_PORT)) {
-					ExecutorService threadPool = Executors.newFixedThreadPool(50);
+				try (final ServerSocket serverSocket = new ServerSocket(port)) {
+					ExecutorService threadPool = Executors.newFixedThreadPool(numClients);
 					while (true) {
 						Socket socket = serverSocket.accept();
 						
@@ -59,7 +71,7 @@ public class HybridServer {
 	public void stop() {
 		this.stop = true;
 		
-		try (Socket socket = new Socket("localhost", SERVICE_PORT)) {
+		try (Socket socket = new Socket("localhost", port)) {
 			// Esta conexión se hace, simplemente, para "despertar" el hilo servidor
 		} catch (IOException e) {
 			throw new RuntimeException(e);
