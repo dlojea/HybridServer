@@ -13,13 +13,14 @@ import es.uvigo.esei.dai.hybridserver.http.HTTPRequest;
 import es.uvigo.esei.dai.hybridserver.http.HTTPRequestMethod;
 import es.uvigo.esei.dai.hybridserver.http.HTTPResponse;
 import es.uvigo.esei.dai.hybridserver.http.HTTPResponseStatus;
+import es.uvigo.esei.dai.hybridserver.http.MIME;
 
 public class ServiceThread implements Runnable {
 	
 	private Socket socket;
-	private PagesMap pages;
+	private PagesDAO pages;
 	
-	public ServiceThread(Socket socket, PagesMap pages) {
+	public ServiceThread(Socket socket, PagesDAO pages) {
 		this.socket = socket;
 		this.pages = pages;
 	}
@@ -46,12 +47,17 @@ public class ServiceThread implements Runnable {
 						uuid = resourceParameters.get("uuid");
 						
 						if (uuid == null) {
-							response.setContent(pages.getList().toString());
+							response.setContent("<h1>Local Server</h1>"  
+									+ pages.getList()
+									);
+							response.putParameter("Content-Type", MIME.TEXT_HTML.getMime());
+							
 							response.setStatus(HTTPResponseStatus.S200);
 						} else {
 							if (pages.containsPage(uuid)) {
 								response.setContent(pages.getPage(uuid));
 								response.setStatus(HTTPResponseStatus.S200);
+								response.putParameter("Content-Type", MIME.TEXT_HTML.getMime());
 							} else {
 								response.setStatus(HTTPResponseStatus.S404);
 							}
@@ -66,6 +72,7 @@ public class ServiceThread implements Runnable {
 							pages.putPage(uuid, resourceParameters.get("html"));
 							response.setStatus(HTTPResponseStatus.S200);
 							response.setContent("<a href=\"html?uuid="+ uuid +"\">"+ uuid +"</a>");
+							
 						} else {
 							response.setStatus(HTTPResponseStatus.S400);
 						}
@@ -87,8 +94,11 @@ public class ServiceThread implements Runnable {
 						break;
 				}
 			} else if (resourceName.isEmpty()) {
-				response.setContent("Hybrid Server");
+				response.setContent("<h1>Hybrid Server </h1><br/>"
+						+ "Autores: Dan y Jordan <br/>"
+						+ "<a href=\"html\"> Lista </a>");
 				response.setStatus(HTTPResponseStatus.S200);
+				response.putParameter("Content-Type", MIME.TEXT_HTML.getMime());
 		    } else {
 				response.setStatus(HTTPResponseStatus.S400);
 			}
