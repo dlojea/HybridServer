@@ -5,6 +5,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.Map;
+import java.util.Properties;
 import java.util.UUID;
 
 import es.uvigo.esei.dai.hybridserver.http.HTTPHeaders;
@@ -20,9 +21,15 @@ public class ServiceThread implements Runnable {
 	private Socket socket;
 	private PagesDAO pages;
 	
-	public ServiceThread(Socket socket, PagesDAO pages) {
+	public ServiceThread (Socket socket, PagesDAO pages) {
 		this.socket = socket;
 		this.pages = pages;
+	}
+	
+	public ServiceThread (Socket socket, Properties properties) {
+		this.socket = socket;
+		this.pages = new PagesDBDAO(properties);
+		
 	}
 
 	@Override
@@ -47,15 +54,20 @@ public class ServiceThread implements Runnable {
 						uuid = resourceParameters.get("uuid");
 						
 						if (uuid == null) {
-							response.setContent("<h1>Local Server</h1>"  
-									+ pages.getList()
-									);
-							response.putParameter("Content-Type", MIME.TEXT_HTML.getMime());
+							StringBuilder sb = new StringBuilder();
+							sb.append("<h1>Local Server</h1>");
+							sb.append("<ul>");
+							for(String page: pages.list()) {
+								sb.append("<li><a href=\"html?uuid="+ page +"\">"+ page +"</a></li>");
+							}
+							sb.append("</ul>");
 							
+							response.setContent(sb.toString());
+							response.putParameter("Content-Type", MIME.TEXT_HTML.getMime());
 							response.setStatus(HTTPResponseStatus.S200);
 						} else {
-							if (pages.containsPage(uuid)) {
-								response.setContent(pages.getPage(uuid));
+							if (pages.contains(uuid)) {
+								response.setContent(pages.get(uuid));
 								response.setStatus(HTTPResponseStatus.S200);
 								response.putParameter("Content-Type", MIME.TEXT_HTML.getMime());
 							} else {
@@ -69,9 +81,9 @@ public class ServiceThread implements Runnable {
 						uuid = UUID.randomUUID().toString();
 						
 						if (resourceParameters.containsKey("html")) {
-							pages.putPage(uuid, resourceParameters.get("html"));
+							pages.create(uuid, resourceParameters.get("html"));
 							response.setStatus(HTTPResponseStatus.S200);
-							response.setContent("<a href=\"html?uuid="+ uuid +"\">"+ uuid +"</a>");
+							response.setContent("<a href=\"html?uuid=" + uuid + "\">" + uuid + "</a>");
 							
 						} else {
 							response.setStatus(HTTPResponseStatus.S400);
@@ -82,8 +94,8 @@ public class ServiceThread implements Runnable {
 						
 						uuid = resourceParameters.get("uuid");
 						
-						if (pages.containsPage(uuid)) {
-							pages.deletePage(uuid);
+						if (pages.contains(uuid)) {
+							pages.delete(uuid);
 							response.setStatus(HTTPResponseStatus.S200);
 						} else {
 							response.setStatus(HTTPResponseStatus.S404);
@@ -94,9 +106,9 @@ public class ServiceThread implements Runnable {
 						break;
 				}
 			} else if (resourceName.isEmpty()) {
-				response.setContent("<h1>Hybrid Server </h1><br/>"
-						+ "Autores: Dan y Jordan <br/>"
-						+ "<a href=\"html\"> Lista </a>");
+				response.setContent("<h1> Hybrid Server</h1><br/>"
+									+ "Autores: Dan y Jordan <br/>"
+									+ "<a href=\"html\"> Lista </a>");
 				response.setStatus(HTTPResponseStatus.S200);
 				response.putParameter("Content-Type", MIME.TEXT_HTML.getMime());
 		    } else {
