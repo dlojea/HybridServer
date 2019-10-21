@@ -1,11 +1,13 @@
 package es.uvigo.esei.dai.hybridserver;
 
+import java.util.List;
+
 public interface PagesDAO {
 	
-	public String getPage (String uuid);
-	public String getList();
-	public boolean containsPage (String uuid);
-	public void putPage (String uuid, String content);
-	public void deletePage(String uuid);
+	public String get (String uuid);
+	public List<String> list();
+	public boolean contains (String uuid);
+	public void create (String uuid, String content);
+	public void delete (String uuid);
 
 }
