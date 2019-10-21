@@ -48,7 +48,8 @@ public class HTTPRequest {
 		}
 		
 		try {
-			while (!(line = buffer.readLine()).equals("")) { // Se almacenan las cabeceras hasta que se encuentre una linea vacia que implica final de cabecera
+			// Se almacenan las cabeceras hasta que se encuentre una linea vacia que implica final de cabecera
+			while (!(line = buffer.readLine()).equals("")) { 
 				
 				String [] headerParameters = line.split(":"); // Separa cabecera de valor por un : 
 				String key = headerParameters[0].trim(); 
@@ -60,7 +61,8 @@ public class HTTPRequest {
 			throw new HTTPParseException(e.getLocalizedMessage());
 		}	
 		
-		if (resource[0] != this.resourceChain) { // Si resourceChain es diferente a la primera posicion de resource significa que contiene parámetros
+		// Si resourceChain es diferente a la primera posicion de resource significa que contiene parámetros
+		if (resource[0] != this.resourceChain) { 
 			
 			String[] resourceParameters = resource[1].split("&"); // Separa cada parámetro por una &
 			for (int i = 0; i < resourceParameters.length; i++) {
@@ -72,8 +74,9 @@ public class HTTPRequest {
 				this.resourceParameters.put(key, value);
 			} 
 		}
-				
-		if (this.headerParameters.containsKey("Content-Length")) { // Si existe el parametro Content-Length en la cabecera es que existe contenido
+		
+		// Si existe el parametro Content-Length en la cabecera es que existe contenido
+		if (this.headerParameters.containsKey("Content-Length")) { 
 			
 			this.contentLength = Integer.parseInt(this.headerParameters.get("Content-Length"));
 			
@@ -95,8 +98,6 @@ public class HTTPRequest {
 			} 
 		}	
 	}
-		
-	
 
 	public HTTPRequestMethod getMethod() {
 		return this.method;
