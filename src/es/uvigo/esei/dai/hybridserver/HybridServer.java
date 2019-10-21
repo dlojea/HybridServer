@@ -30,6 +30,8 @@ public class HybridServer {
 	}
 	
 	public HybridServer(Map<String, String> pages) {
+		this.numClients = 50;
+		this.port = 8888;
 		this.pages = new PagesMapDAO(pages);
 	}
 
@@ -53,8 +55,11 @@ public class HybridServer {
 						Socket socket = serverSocket.accept();
 						
 						if (stop) break;
-						//threadPool.execute(new ServiceThread(socket, pages));	
-						threadPool.execute(new ServiceThread(socket, properties));					
+						if(pages != null) {
+							threadPool.execute(new ServiceThread(socket, pages));	
+						} else {
+							threadPool.execute(new ServiceThread(socket, properties));	
+						}
 							
 					}
 				} catch (IOException e) {
