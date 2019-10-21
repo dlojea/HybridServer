@@ -16,7 +16,7 @@ public class PagesDBDAO implements PagesDAO {
 	private String password;
 	private String url;
 	
-	public PagesDBDAO (Properties properties){
+	public PagesDBDAO (Properties properties) {
 		this.user = properties.getProperty("db.user", "hsdb");
 		this.password = properties.getProperty("db.password", "hsdbpass");
 		this.url = properties.getProperty("db.url", "jdbc:mysql://localhost:3306/hstestdb");
