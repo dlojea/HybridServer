@@ -70,7 +70,7 @@ public class HTTPResponse {
 	public void print(Writer writer) throws IOException {
 		
 		writer.write(this.getVersion() + " ");
-		writer.write(String.format("%d", this.getStatus().getCode()) + " ");
+		writer.write(this.getStatus().getCode() + " ");
 		writer.write(this.getStatus().getStatus());
 		writer.write("\r\n");
 		

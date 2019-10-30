@@ -28,11 +28,16 @@ public class HTTPRequest {
 		BufferedReader buffer = new BufferedReader(reader);
 		
 		String line = buffer.readLine();
-		String [] field = line.split(" "); //Separa lo valor de la primera linea por espacios
+		String [] field = line.split(" "); // Separa lo valor de la primera linea por espacios
 		
 		try {	
 			this.method = HTTPRequestMethod.valueOf(field[0]);
-			this.resourceChain = field[1];
+			String sanitizedString = field[1].replaceAll("\\/+", "/"); // Se eliminan las / repetidas
+	
+			if (!sanitizedString.equals("/")) {
+				sanitizedString = sanitizedString.replaceAll("\\/$", ""); // Se elimina la / final si la cadena tiene mas contenido
+			}
+			this.resourceChain = sanitizedString;
 			this.httpVersion = field[2];
 			
 		} catch (IllegalArgumentException e) {
@@ -40,9 +45,9 @@ public class HTTPRequest {
 		} catch (ArrayIndexOutOfBoundsException e) {
 			throw new HTTPParseException(e.getLocalizedMessage());
 		}
-		
+
 		String [] resource = this.resourceChain.split("\\?"); // Separa la resourceChain por una ? quedando el recurso y los parámetros separados
-		this.resourceName = resource[0].substring(1); // El nombre del recurso va antes de la ?
+		this.resourceName = resource[0].substring(1); // El nombre del recurso va antes de la ? y se elminan la / inicial 	
 		if (!this.resourceName.equals("")) {
 			this.resourcePath = this.resourceName.split("/"); // Se almacena en cada posicion del array cada directorio
 		}
@@ -86,6 +91,8 @@ public class HTTPRequest {
 			
 			String decoded = URLDecoder.decode(content, "UTF-8"); // Decodifica el string usando UTF-8
 			this.content = decoded;
+			
+			
 			
 			String[] resourceParameters = this.content.split("&");
 			for (int i = 0; i < resourceParameters.length; i++) {

@@ -10,8 +10,7 @@ public class Launcher {
 		// Si no contiene archivo de propiedades crea un servidor por defecto
 		if (args.length == 0 ) {
 			
-			HybridServer server = new HybridServer();
-			server.start();
+			new HybridServer().start();
 			
 		} else if (args.length == 1) {
 			
@@ -23,12 +22,29 @@ public class Launcher {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			HybridServer server = new HybridServer(properties);
-			server.start();
+			if (hasAllProperties(properties)) {
+				new HybridServer(properties).start();
+			} else {
+				System.out.println("Error: faltan propiedades");
+			}
 			
 		} else {
 			System.out.println("Error: solo puede haber un parámetro");
 		}
+	}
+	
+	private static boolean hasAllProperties(Properties properties) {
+		
+		String[] propertiesNames = {"numClients","port","db.url","db.user","db.password"};
+		
+		for (String property: propertiesNames) {
+			// Comprueba si no existe la propiedad o si su valor es vacío
+			if (properties.getProperty(property) == null || properties.getProperty(property).isEmpty()) {
+				
+				return false;
+			}
+		}
+		
+		return true;
 	}
 }

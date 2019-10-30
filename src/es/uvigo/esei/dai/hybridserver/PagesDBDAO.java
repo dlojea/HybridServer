@@ -17,9 +17,9 @@ public class PagesDBDAO implements PagesDAO {
 	private String url;
 	
 	public PagesDBDAO (Properties properties) {
-		this.user = properties.getProperty("db.user", "hsdb");
-		this.password = properties.getProperty("db.password", "hsdbpass");
-		this.url = properties.getProperty("db.url", "jdbc:mysql://localhost:3306/hstestdb");
+		this.user = properties.getProperty("db.user");
+		this.password = properties.getProperty("db.password");
+		this.url = properties.getProperty("db.url");
 	}
 
 	@Override
@@ -48,7 +48,9 @@ public class PagesDBDAO implements PagesDAO {
 	public List<String> list() {
 		try (Connection connection = DriverManager.getConnection(this.url, this.user, this.password)) {
 			try (Statement statement = connection.createStatement()) {
-				try (ResultSet result = statement.executeQuery("SELECT * FROM HTML")) {
+				try (ResultSet result = statement.executeQuery(
+						"SELECT * FROM HTML"
+				)) {
 					List<String> pages = new ArrayList<>();
 					
 					while (result.next()) {
@@ -118,7 +120,5 @@ public class PagesDBDAO implements PagesDAO {
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
-
 	}
-
 }

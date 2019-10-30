@@ -1,6 +1,5 @@
 package es.uvigo.esei.dai.hybridserver;
 
-
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -8,17 +7,18 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-
+import java.util.concurrent.TimeUnit;
 
 public class HybridServer {
 	private static final int SERVICE_PORT = 8888;
 	private Thread serverThread;
 	private boolean stop;
 	private PagesDAO pages;
+	private ExecutorService threadPool;
 	private int numClients;
 	private int port;
 	private Properties properties;
+	
 
 	public HybridServer() {
 		this.numClients = 50;
@@ -36,8 +36,8 @@ public class HybridServer {
 	}
 
 	public HybridServer(Properties properties) {
-		this.numClients = Integer.parseInt(properties.getProperty("numClients", "50"));
-		this.port = Integer.parseInt(properties.getProperty("port", "8888"));
+		this.numClients = Integer.parseInt(properties.getProperty("numClients"));
+		this.port = Integer.parseInt(properties.getProperty("port"));
 		this.properties = properties;
 	}
 
@@ -50,7 +50,7 @@ public class HybridServer {
 			@Override
 			public void run() {
 				try (final ServerSocket serverSocket = new ServerSocket(port)) {
-					ExecutorService threadPool = Executors.newFixedThreadPool(numClients);
+					threadPool = Executors.newFixedThreadPool(numClients);
 					while (true) {
 						Socket socket = serverSocket.accept();
 						
@@ -85,6 +85,14 @@ public class HybridServer {
 			this.serverThread.join();
 		} catch (InterruptedException e) {
 			throw new RuntimeException(e);
+		}
+		
+		threadPool.shutdownNow();
+		 
+		try {
+		  threadPool.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
+		} catch (InterruptedException e) {
+		  e.printStackTrace();
 		}
 		
 		this.serverThread = null;
