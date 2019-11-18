@@ -4,14 +4,15 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
-import java.util.Map;
+import java.util.Arrays;
 import java.util.Properties;
-import java.util.UUID;
 
+import es.uvigo.esei.dai.hybridserver.controller.Controller;
+import es.uvigo.esei.dai.hybridserver.controller.HtmlController;
+import es.uvigo.esei.dai.hybridserver.dao.HtmlDBDAO;
 import es.uvigo.esei.dai.hybridserver.http.HTTPHeaders;
 import es.uvigo.esei.dai.hybridserver.http.HTTPParseException;
 import es.uvigo.esei.dai.hybridserver.http.HTTPRequest;
-import es.uvigo.esei.dai.hybridserver.http.HTTPRequestMethod;
 import es.uvigo.esei.dai.hybridserver.http.HTTPResponse;
 import es.uvigo.esei.dai.hybridserver.http.HTTPResponseStatus;
 import es.uvigo.esei.dai.hybridserver.http.MIME;
@@ -19,20 +20,15 @@ import es.uvigo.esei.dai.hybridserver.http.MIME;
 public class ServiceThread implements Runnable {
 	
 	private Socket socket;
-	private HtmlDAO pages;
+	private Properties properties;
 	private HTTPResponse response;
-	
-	public ServiceThread (Socket socket, HtmlDAO pages) {
-		this.socket = socket;
-		this.pages = pages;
-		response = new HTTPResponse();
-	}
+	private String [] resources = {"html"};
+	private Controller controller;
 	
 	public ServiceThread (Socket socket, Properties properties) {
 		this.socket = socket;
-		this.pages = new HtmlDBDAO(properties);
 		response = new HTTPResponse();
-		
+		this.properties = properties;	
 	}
 	
 	public void setResponse (String content, String type, HTTPResponseStatus status) {
@@ -44,6 +40,11 @@ public class ServiceThread implements Runnable {
 		response.setStatus(status);
 		response.setVersion(HTTPHeaders.HTTP_1_1.getHeader());
 	}
+	
+	public void setResponse (HTTPResponseStatus status) {
+		response.setStatus(status);
+		response.setVersion(HTTPHeaders.HTTP_1_1.getHeader());
+	}
 
 	@Override
 	public void run() {
@@ -51,30 +52,38 @@ public class ServiceThread implements Runnable {
 			
 			HTTPRequest request = new HTTPRequest(new InputStreamReader(socket.getInputStream()));
 			System.out.print(request.toString() + "\n");
-			
-			
 			String resourceName = request.getResourceName();
 			
-			
-			response.setVersion(HTTPHeaders.HTTP_1_1.getHeader());
-			
-			if (resourceName.equals("html")) {
+			if (Arrays.asList(resources).contains(resourceName)) {
 				try {
-					HtmlController controller = new HtmlController(pages);
+					switch (resourceName) {
+						case "html":
+							controller = new HtmlController(new HtmlDBDAO(properties));
+							break;
+						case "xml":
+							break;
+						case "xsd":
+							break;
+						case "xslt":
+							break;
+					}
 					controller.setResponse(request);
-					this.setResponse(controller.getContent(), controller.getType(), controller.getStatus());
+					setResponse(controller.getContent(), controller.getType(), controller.getStatus());
+					
 				} catch (Exception e) {
-					response.setStatus(HTTPResponseStatus.S500);
+					setResponse(HTTPResponseStatus.S500);
 				}
 				
 			} else if (resourceName.isEmpty()) {
-				response.setContent("<html><h1> Hybrid Server</h1><br/>"
-									+ "Autores: Daniel L&oacute;pez Ojea y Jordan Oreiro Vieites<br/>"
-									+ "<a href=\"/html\"> Lista </a></html>");
-				response.setStatus(HTTPResponseStatus.S200);
-				response.putParameter("Content-Type", MIME.TEXT_HTML.getMime());
+				setResponse(
+					"<html><h1> Hybrid Server</h1><br/>" +
+					"Autores: Daniel L&oacute;pez Ojea y Jordan Oreiro Vieites<br/>" +
+					"<a href=\"/html\"> Lista </a></html>", 
+					MIME.TEXT_HTML.getMime(), 
+					HTTPResponseStatus.S200
+				);
 		    } else {
-				response.setStatus(HTTPResponseStatus.S400);
+				setResponse(HTTPResponseStatus.S400);
 			}
 		
 			response.print(new OutputStreamWriter(socket.getOutputStream()));

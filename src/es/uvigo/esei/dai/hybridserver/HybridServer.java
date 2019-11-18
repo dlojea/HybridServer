@@ -3,7 +3,6 @@ package es.uvigo.esei.dai.hybridserver;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -13,7 +12,6 @@ public class HybridServer {
 	private static final int SERVICE_PORT = 8888;
 	private Thread serverThread;
 	private boolean stop;
-	private HtmlDAO pages;
 	private ExecutorService threadPool;
 	private int numClients;
 	private int port;
@@ -27,12 +25,6 @@ public class HybridServer {
 		this.properties.put("db.url", "jdbc:mysql://localhost:3306/hstestdb");
 		this.properties.put("db.user", "hsdb");
 		this.properties.put("db.password", "hsdbpass");
-	}
-	
-	public HybridServer(Map<String, String> pages) {
-		this.numClients = 50;
-		this.port = 8888;
-		this.pages = new HtmlMapDAO(pages);
 	}
 
 	public HybridServer(Properties properties) {
@@ -59,11 +51,8 @@ public class HybridServer {
 						Socket socket = serverSocket.accept();
 						
 						if (stop) break;
-						if(pages != null) {
-							threadPool.execute(new ServiceThread(socket, pages));	
-						} else {
-							threadPool.execute(new ServiceThread(socket, properties));	
-						}
+						threadPool.execute(new ServiceThread(socket, properties));	
+						
 							
 					}
 				} catch (IOException e) {

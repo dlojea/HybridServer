@@ -1,11 +1,12 @@
-package es.uvigo.esei.dai.hybridserver;
+package es.uvigo.esei.dai.hybridserver.controller;
 
 import java.util.Map;
 import java.util.UUID;
 
+import es.uvigo.esei.dai.hybridserver.dao.HtmlDAO;
 import es.uvigo.esei.dai.hybridserver.http.*;
 
-public class HtmlController {
+public class HtmlController implements Controller {
 	
 	private HtmlDAO pages;
 	private String content;
@@ -16,6 +17,7 @@ public class HtmlController {
 		this.pages = pages;
 	}
 	
+	@Override
 	public void setResponse(HTTPRequest request) {
 		HTTPRequestMethod method = request.getMethod();
 		Map<String, String> resourceParameters = request.getResourceParameters();
@@ -81,14 +83,17 @@ public class HtmlController {
 		}
 	}
 	
+	@Override
 	public String getContent() {
 		return content;
 	}
 	
+	@Override
 	public String getType() {
 		return type;
 	}
 	
+	@Override
 	public HTTPResponseStatus getStatus() {
 		return status;
 	}

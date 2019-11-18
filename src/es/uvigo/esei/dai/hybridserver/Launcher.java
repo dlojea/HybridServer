@@ -22,6 +22,7 @@ public class Launcher {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
 			if (hasAllProperties(properties)) {
 				new HybridServer(properties).start();
 			} else {

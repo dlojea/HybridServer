@@ -1,4 +1,4 @@
-package es.uvigo.esei.dai.hybridserver;
+package es.uvigo.esei.dai.hybridserver.dao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
