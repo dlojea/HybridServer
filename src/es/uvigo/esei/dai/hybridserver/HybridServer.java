@@ -13,7 +13,7 @@ public class HybridServer {
 	private static final int SERVICE_PORT = 8888;
 	private Thread serverThread;
 	private boolean stop;
-	private PagesDAO pages;
+	private HtmlDAO pages;
 	private ExecutorService threadPool;
 	private int numClients;
 	private int port;
@@ -32,13 +32,17 @@ public class HybridServer {
 	public HybridServer(Map<String, String> pages) {
 		this.numClients = 50;
 		this.port = 8888;
-		this.pages = new PagesMapDAO(pages);
+		this.pages = new HtmlMapDAO(pages);
 	}
 
 	public HybridServer(Properties properties) {
 		this.numClients = Integer.parseInt(properties.getProperty("numClients"));
 		this.port = Integer.parseInt(properties.getProperty("port"));
 		this.properties = properties;
+	}
+
+	public HybridServer(Configuration load) {
+		// TODO Auto-generated constructor stub
 	}
 
 	public int getPort() {

@@ -2,7 +2,7 @@ package es.uvigo.esei.dai.hybridserver;
 
 import java.util.List;
 
-public interface PagesDAO {
+public interface HtmlDAO {
 	
 	public String get (String uuid);
 	public List<String> list();

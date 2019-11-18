@@ -10,13 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-public class PagesDBDAO implements PagesDAO {
+public class HtmlDBDAO implements HtmlDAO {
 	
 	private String user;
 	private String password;
 	private String url;
 	
-	public PagesDBDAO (Properties properties) {
+	public HtmlDBDAO (Properties properties) {
 		this.user = properties.getProperty("db.user");
 		this.password = properties.getProperty("db.password");
 		this.url = properties.getProperty("db.url");

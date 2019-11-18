@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class PagesMapDAO implements PagesDAO{
+public class HtmlMapDAO implements HtmlDAO{
 	
 	private Map<String, String> pages;
 	
-	public PagesMapDAO (Map<String, String> pages) {
+	public HtmlMapDAO (Map<String, String> pages) {
 		this.pages = pages;
 	}
 	
