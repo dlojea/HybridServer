@@ -31,6 +31,19 @@ public class ServiceThread implements Runnable {
 		this.pages = new PagesDBDAO(properties);
 		
 	}
+	
+	private String putBody(String body) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("<!DOCTYPE html>");
+		sb.append("<html lang=\"es\">");
+		sb.append("<head>");
+		sb.append("<meta charset=\"UTF-8\">");
+		sb.append("<title> Hybrid Server </title>");
+		sb.append("</head>");
+		sb.append("<body>" + body + "</body>");
+		sb.append("</html>");
+		return sb.toString();
+	}
 
 	@Override
 	public void run() {
@@ -64,12 +77,12 @@ public class ServiceThread implements Runnable {
 								}
 								sb.append("</ul>");
 								
-								response.setContent(sb.toString());
+								response.setContent(putBody(sb.toString()));
 								response.putParameter("Content-Type", MIME.TEXT_HTML.getMime());
 								response.setStatus(HTTPResponseStatus.S200);
 							} else {
 								if (pages.contains(uuid)) {
-									response.setContent(pages.get(uuid));
+									response.setContent(putBody(pages.get(uuid)));
 									response.setStatus(HTTPResponseStatus.S200);
 									response.putParameter("Content-Type", MIME.TEXT_HTML.getMime());
 								} else {
@@ -85,7 +98,7 @@ public class ServiceThread implements Runnable {
 							if (resourceParameters.containsKey("html")) {
 								pages.create(uuid, resourceParameters.get("html"));
 								response.setStatus(HTTPResponseStatus.S200);
-								response.setContent("<a href=\"html?uuid=" + uuid + "\">" + uuid + "</a>");
+								response.setContent(putBody("<a href=\"html?uuid=" + uuid + "\">" + uuid + "</a>"));
 								
 							} else {
 								response.setStatus(HTTPResponseStatus.S400);
@@ -113,9 +126,9 @@ public class ServiceThread implements Runnable {
 				}
 				
 			} else if (resourceName.isEmpty()) {
-				response.setContent("<h1> Hybrid Server</h1><br/>"
+				response.setContent(putBody("<h1> Hybrid Server</h1><br/>"
 									+ "Autores: Daniel L&oacute;pez Ojea y Jordan Oreiro Vieites<br/>"
-									+ "<a href=\"/html\"> Lista </a>");
+									+ "<a href=\"/html\"> Lista </a>"));
 				response.setStatus(HTTPResponseStatus.S200);
 				response.putParameter("Content-Type", MIME.TEXT_HTML.getMime());
 		    } else {
