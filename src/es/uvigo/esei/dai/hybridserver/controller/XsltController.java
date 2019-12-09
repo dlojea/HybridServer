@@ -3,20 +3,23 @@ package es.uvigo.esei.dai.hybridserver.controller;
 import java.util.Map;
 import java.util.UUID;
 
-import es.uvigo.esei.dai.hybridserver.dao.HtmlDAO;
-import es.uvigo.esei.dai.hybridserver.http.*;
+import es.uvigo.esei.dai.hybridserver.dao.XsltDAO;
+import es.uvigo.esei.dai.hybridserver.http.HTTPRequest;
+import es.uvigo.esei.dai.hybridserver.http.HTTPRequestMethod;
+import es.uvigo.esei.dai.hybridserver.http.HTTPResponseStatus;
+import es.uvigo.esei.dai.hybridserver.http.MIME;
 
-public class HtmlController implements Controller{
-	
-	private HtmlDAO pages;
+public class XsltController implements Controller {
+
+	private XsltDAO pages;
 	private String content;
 	private String type;
 	private HTTPResponseStatus status;
 
-	public HtmlController(HtmlDAO pages) {
+	public XsltController(XsltDAO pages) {
 		this.pages = pages;
 	}
-	
+
 	@Override
 	public void setResponse(HTTPRequest request) {
 		HTTPRequestMethod method = request.getMethod();
@@ -34,17 +37,17 @@ public class HtmlController implements Controller{
 					sb.append("<html><h1>Local Server</h1>");
 					sb.append("<ul>");
 					for(String page: pages.list()) {
-						sb.append("<li><a href=\"/html?uuid="+ page +"\">"+ page +"</a></li>");
+						sb.append("<li><a href=\"/xslt?uuid="+ page +"\">"+ page +"</a></li>");
 					}
 					sb.append("</ul></html>");
 					
 					content = sb.toString();
-					type = MIME.TEXT_HTML.getMime();
+					type = MIME.APPLICATION_XML.getMime();
 					status = HTTPResponseStatus.S200;
 				} else {
 					if (pages.contains(uuid)) {
 						content = pages.get(uuid);
-						type =  MIME.TEXT_HTML.getMime();
+						type =  MIME.APPLICATION_XML.getMime();
 						status = HTTPResponseStatus.S200;
 					} else {
 						status = HTTPResponseStatus.S404;
@@ -56,11 +59,14 @@ public class HtmlController implements Controller{
 				
 				uuid = UUID.randomUUID().toString();
 				
-				if (resourceParameters.containsKey("html")) {
-					pages.create(uuid, resourceParameters.get("html"));
-					status = HTTPResponseStatus.S200;
-					content = "<html><a href=\"html?uuid=" + uuid + "\">" + uuid + "</a></html>";
-					
+				if (resourceParameters.containsKey("xslt") && resourceParameters.containsKey("xsd")) {
+					if (!pages.hasXsd(resourceParameters.get("xsd"))) 
+						status = HTTPResponseStatus.S404;
+					else {
+						pages.create(uuid, resourceParameters.get("xsd"), resourceParameters.get("xslt"));
+						status = HTTPResponseStatus.S200;
+						content = "<html><a href=\"xslt?uuid=" + uuid + "\">" + uuid + "</a></html>";
+					}
 				} else {
 					status = HTTPResponseStatus.S400;
 				}
@@ -81,8 +87,9 @@ public class HtmlController implements Controller{
 			default:
 				break;
 		}
+
 	}
-	
+
 	@Override
 	public String getContent() {
 		return content;
@@ -97,5 +104,5 @@ public class HtmlController implements Controller{
 	public HTTPResponseStatus getStatus() {
 		return status;
 	}
-	
+
 }

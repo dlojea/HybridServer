@@ -11,9 +11,11 @@ import es.uvigo.esei.dai.hybridserver.controller.Controller;
 import es.uvigo.esei.dai.hybridserver.controller.HtmlController;
 import es.uvigo.esei.dai.hybridserver.controller.XmlController;
 import es.uvigo.esei.dai.hybridserver.controller.XsdController;
+import es.uvigo.esei.dai.hybridserver.controller.XsltController;
 import es.uvigo.esei.dai.hybridserver.dao.HtmlDAO;
 import es.uvigo.esei.dai.hybridserver.dao.XmlDAO;
 import es.uvigo.esei.dai.hybridserver.dao.XsdDAO;
+import es.uvigo.esei.dai.hybridserver.dao.XsltDAO;
 import es.uvigo.esei.dai.hybridserver.http.HTTPHeaders;
 import es.uvigo.esei.dai.hybridserver.http.HTTPParseException;
 import es.uvigo.esei.dai.hybridserver.http.HTTPRequest;
@@ -26,7 +28,7 @@ public class ServiceThread implements Runnable {
 	private Socket socket;
 	private Properties properties;
 	private HTTPResponse response;
-	private String [] resources = {"html","xml","xsd"};
+	private String [] resources = {"html","xml","xsd","xslt"};
 	private Controller controller;
 	
 	public ServiceThread (Socket socket, Properties properties) {
@@ -71,6 +73,7 @@ public class ServiceThread implements Runnable {
 							controller = new XsdController (new XsdDAO (properties));
 							break;
 						case "xslt":
+							controller = new XsltController (new XsltDAO (properties));
 							break;
 					}
 					controller.setResponse(request);

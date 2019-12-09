@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-public class XsdDAO implements DAO {
+public class XsdDAO {
 	
 	private String user;
 	private String password;
@@ -22,7 +22,7 @@ public class XsdDAO implements DAO {
 		this.url = properties.getProperty("db.url");
 	}
 
-	@Override
+	
 	public String get(String uuid) {
 		try (Connection connection = DriverManager.getConnection(this.url, this.user, this.password)) {
 			try (PreparedStatement statement = connection.prepareStatement(
@@ -44,7 +44,7 @@ public class XsdDAO implements DAO {
 		}
 	}
 
-	@Override
+	
 	public List<String> list() {
 		try (Connection connection = DriverManager.getConnection(this.url, this.user, this.password)) {
 			try (Statement statement = connection.createStatement()) {
@@ -65,7 +65,7 @@ public class XsdDAO implements DAO {
 		}
 	}
 
-	@Override
+	
 	public boolean contains(String uuid) {
 		try (Connection connection = DriverManager.getConnection(this.url, this.user, this.password)) {
 			try (PreparedStatement statement = connection.prepareStatement(
@@ -87,7 +87,7 @@ public class XsdDAO implements DAO {
 		}
 	}
 
-	@Override
+	
 	public void create(String uuid, String content) {
 		try (Connection connection = DriverManager.getConnection(this.url, this.user, this.password)) {
 			try (PreparedStatement statement = connection.prepareStatement(
@@ -105,7 +105,7 @@ public class XsdDAO implements DAO {
 		}
 	}
 
-	@Override
+	
 	public void delete(String uuid) {
 		try (Connection connection = DriverManager.getConnection(this.url, this.user, this.password)) {
 			try (PreparedStatement statement = connection.prepareStatement(

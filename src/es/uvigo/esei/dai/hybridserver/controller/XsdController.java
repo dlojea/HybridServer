@@ -3,7 +3,7 @@ package es.uvigo.esei.dai.hybridserver.controller;
 import java.util.Map;
 import java.util.UUID;
 
-import es.uvigo.esei.dai.hybridserver.dao.DAO;
+import es.uvigo.esei.dai.hybridserver.dao.XsdDAO;
 import es.uvigo.esei.dai.hybridserver.http.HTTPRequest;
 import es.uvigo.esei.dai.hybridserver.http.HTTPRequestMethod;
 import es.uvigo.esei.dai.hybridserver.http.HTTPResponseStatus;
@@ -11,12 +11,12 @@ import es.uvigo.esei.dai.hybridserver.http.MIME;
 
 public class XsdController implements Controller {
 	
-	private DAO pages;
+	private XsdDAO pages;
 	private String content;
 	private String type;
 	private HTTPResponseStatus status;
 
-	public XsdController(DAO pages) {
+	public XsdController(XsdDAO pages) {
 		this.pages = pages;
 	}
 

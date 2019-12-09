@@ -10,23 +10,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-public class XmlDAO {
-	
+public class XsltDAO {
+
 	private String user;
 	private String password;
 	private String url;
-
-	public XmlDAO(Properties properties) {
+	
+	public XsltDAO (Properties properties) {
 		this.user = properties.getProperty("db.user");
 		this.password = properties.getProperty("db.password");
 		this.url = properties.getProperty("db.url");
 	}
 
-	
-	public String get(String uuid) {
+	public String get (String uuid) {
 		try (Connection connection = DriverManager.getConnection(this.url, this.user, this.password)) {
 			try (PreparedStatement statement = connection.prepareStatement(
-					"SELECT * FROM XML WHERE uuid = ?"
+					"SELECT * FROM XSLT WHERE uuid = ?"
 			)) {
 				
 				statement.setString(1, uuid);
@@ -44,12 +43,11 @@ public class XmlDAO {
 		}
 	}
 
-	
 	public List<String> list() {
 		try (Connection connection = DriverManager.getConnection(this.url, this.user, this.password)) {
 			try (Statement statement = connection.createStatement()) {
 				try (ResultSet result = statement.executeQuery(
-						"SELECT * FROM XML"
+						"SELECT * FROM XSLT"
 				)) {
 					List<String> pages = new ArrayList<>();
 					
@@ -65,11 +63,10 @@ public class XmlDAO {
 		}
 	}
 
-	
-	public boolean contains(String uuid) {
+	public boolean contains (String uuid) {
 		try (Connection connection = DriverManager.getConnection(this.url, this.user, this.password)) {
 			try (PreparedStatement statement = connection.prepareStatement(
-					"SELECT * FROM XML WHERE uuid = ?"
+					"SELECT * FROM XSLT WHERE uuid = ?"
 			)) {
 				
 				statement.setString(1, uuid);
@@ -87,15 +84,15 @@ public class XmlDAO {
 		}
 	}
 
-	
-	public void create(String uuid, String content) {
+	public void create (String uuid, String xsd, String content) {
 		try (Connection connection = DriverManager.getConnection(this.url, this.user, this.password)) {
 			try (PreparedStatement statement = connection.prepareStatement(
-				"INSERT INTO XML (uuid, content) VALUES (?, ?)"
+				"INSERT INTO XSLT (uuid, xsd, content) VALUES (?, ?, ?)"
 			)) {
 				
 				statement.setString(1, uuid);
-				statement.setString(2, content);
+				statement.setString(2, xsd);
+				statement.setString(3, content);
 				
 				if (statement.executeUpdate() != 1)
 					throw new SQLException("Error insertando página");
@@ -105,11 +102,10 @@ public class XmlDAO {
 		}
 	}
 
-	
-	public void delete(String uuid) {
+	public void delete (String uuid) {
 		try (Connection connection = DriverManager.getConnection(this.url, this.user, this.password)) {
 			try (PreparedStatement statement = connection.prepareStatement(
-				"DELETE FROM XML WHERE uuid = ?"
+				"DELETE FROM XSLT WHERE uuid = ?"
 			)) {
 				
 				statement.setString(1, uuid);
@@ -122,50 +118,19 @@ public class XmlDAO {
 		}
 	}
 	
-	public String getSchema(String xslt){
-		try (Connection connection = DriverManager.getConnection(this.url, this.user, this.password)){
+	public boolean hasXsd (String uuid) {
+		try (Connection connection = DriverManager.getConnection(this.url, this.user, this.password)) {
 			try (PreparedStatement statement = connection.prepareStatement(
-				"SELECT * FROM XSLT WHERE uuid=?"
+					"SELECT * FROM XSD WHERE uuid = ?"
 			)) {
-				statement.setString(1, xslt);
+				
+				statement.setString(1, uuid);
 				
 				try (ResultSet result = statement.executeQuery()) {
 					if (result.next()) {
-						String xsd = result.getString("xsd");
-						try (PreparedStatement statement2 = connection.prepareStatement(
-							"SELECT * FROM XSD WHERE uuid=?"
-						)) {
-							statement2.setString(1, xsd);
-							try (ResultSet result2 = statement2.executeQuery()) {
-								if (result2.next()) {
-									return result2.getString("uuid");
-								} else {
-									return null;
-								}
-							}
-						}
-					} else {
-						return null;
-					}
-				}
-			}
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
-	}
-	
-	public boolean containsTemplate(String xslt) {
-		try (Connection connection = DriverManager.getConnection(this.url, this.user, this.password)) {
-			try (PreparedStatement statement = connection.prepareStatement(
-				"SELECT * FROM XSLT WHERE uuid=?"
-			)) {
-				statement.setString(1, xslt);
-				
-				try (ResultSet result = statement.executeQuery()) {
-					if (result.first()) {
 						return true;
 					} else {
-						return false;
+						return false; 
 					}
 				}
 			}
