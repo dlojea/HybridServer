@@ -3,17 +3,17 @@ package es.uvigo.esei.dai.hybridserver.controller;
 import java.util.Map;
 import java.util.UUID;
 
-import es.uvigo.esei.dai.hybridserver.dao.HtmlDAO;
+import es.uvigo.esei.dai.hybridserver.dao.DAO;
 import es.uvigo.esei.dai.hybridserver.http.*;
 
 public class HtmlController implements Controller {
 	
-	private HtmlDAO pages;
+	private DAO pages;
 	private String content;
 	private String type;
 	private HTTPResponseStatus status;
 
-	public HtmlController(HtmlDAO pages) {
+	public HtmlController(DAO pages) {
 		this.pages = pages;
 	}
 	
