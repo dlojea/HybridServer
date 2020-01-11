@@ -21,7 +21,6 @@ public class XmlDAO {
 		this.password = properties.getProperty("db.password");
 		this.url = properties.getProperty("db.url");
 	}
-
 	
 	public String get(String uuid) {
 		try (Connection connection = DriverManager.getConnection(this.url, this.user, this.password)) {
@@ -43,7 +42,6 @@ public class XmlDAO {
 			throw new RuntimeException(e);
 		}
 	}
-
 	
 	public List<String> list() {
 		try (Connection connection = DriverManager.getConnection(this.url, this.user, this.password)) {
@@ -64,7 +62,6 @@ public class XmlDAO {
 			throw new RuntimeException(e);
 		}
 	}
-
 	
 	public boolean contains(String uuid) {
 		try (Connection connection = DriverManager.getConnection(this.url, this.user, this.password)) {
@@ -86,7 +83,6 @@ public class XmlDAO {
 			throw new RuntimeException(e);
 		}
 	}
-
 	
 	public void create(String uuid, String content) {
 		try (Connection connection = DriverManager.getConnection(this.url, this.user, this.password)) {
@@ -105,7 +101,6 @@ public class XmlDAO {
 		}
 	}
 
-	
 	public void delete(String uuid) {
 		try (Connection connection = DriverManager.getConnection(this.url, this.user, this.password)) {
 			try (PreparedStatement statement = connection.prepareStatement(
