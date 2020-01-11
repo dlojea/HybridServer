@@ -18,11 +18,65 @@
 package es.uvigo.esei.dai.hybridserver;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 public class XMLConfigurationLoader {
-	public Configuration load(File xmlFile)
-	throws Exception {
-		// Implementar en la semana 9. 
-		return null;
+	
+	private int http;
+	private String webservice;
+	private int numClients;
+	
+	private String user;
+	private String password;
+	private String url;
+	
+	private List<ServerConfiguration> servers = new ArrayList<ServerConfiguration>();
+	private Configuration config;
+	
+	public Configuration load(File xmlFile) throws Exception {   
+		
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder = factory.newDocumentBuilder();
+		 
+		Document document = builder.parse(xmlFile);
+		
+		Element connections = (Element) document.getElementsByTagName("connections").item(0);
+		
+		http = Integer.parseInt(connections.getElementsByTagName("http").item(0).getTextContent());
+		webservice = connections.getElementsByTagName("webservice").item(0).getTextContent();
+		numClients = Integer.parseInt(connections.getElementsByTagName("numClients").item(0).getTextContent());
+		
+		Element database = (Element) document.getElementsByTagName("database").item(0);
+		
+		user = database.getElementsByTagName("user").item(0).getTextContent();
+		password = database.getElementsByTagName("password").item(0).getTextContent();
+		url = database.getElementsByTagName("url").item(0).getTextContent();
+		
+		NodeList serversNode = (NodeList) document.getElementsByTagName("server");
+		
+		for (int i = 0; i < serversNode.getLength(); i++) {
+			Element server = (Element) serversNode.item(i);
+			
+			String name = server.getAttribute("name");
+			String wsdl = server.getAttribute("wsdl");
+			String namespace = server.getAttribute("namespace");
+			String service = server.getAttribute("service");
+			String httpAddress = server.getAttribute("httpAddress");
+			
+			ServerConfiguration serverConf = new ServerConfiguration(name,wsdl,namespace,service,httpAddress);
+			servers.add(serverConf);
+		}
+		
+		config = new Configuration(http,numClients,webservice,user,password,url,servers);
+		
+		return config;
 	}
 }
