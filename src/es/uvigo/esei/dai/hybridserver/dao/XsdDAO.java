@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import es.uvigo.esei.dai.hybridserver.Configuration;
+
 public class XsdDAO {
 	
 	private String user;
@@ -21,7 +23,13 @@ public class XsdDAO {
 		this.password = properties.getProperty("db.password");
 		this.url = properties.getProperty("db.url");
 	}
-
+	
+	public XsdDAO(Configuration config) {
+		this.user = config.getDbUser();
+		this.password = config.getDbPassword();
+		this.url = config.getDbURL();
+		
+	}
 	
 	public String get(String uuid) {
 		try (Connection connection = DriverManager.getConnection(this.url, this.user, this.password)) {

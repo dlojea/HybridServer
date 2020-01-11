@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import es.uvigo.esei.dai.hybridserver.Configuration;
+
 public class XsltDAO {
 
 	private String user;
@@ -20,6 +22,12 @@ public class XsltDAO {
 		this.user = properties.getProperty("db.user");
 		this.password = properties.getProperty("db.password");
 		this.url = properties.getProperty("db.url");
+	}
+	
+	public XsltDAO(Configuration config) {
+		this.user = config.getDbUser();
+		this.password = config.getDbPassword();
+		this.url = config.getDbURL();
 	}
 
 	public String get (String uuid) {
