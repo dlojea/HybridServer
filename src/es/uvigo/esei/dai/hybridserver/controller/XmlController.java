@@ -33,12 +33,12 @@ public class XmlController implements Controller {
 				
 				if (uuid == null) {
 					StringBuilder sb = new StringBuilder();
-					sb.append("<html><h1>Local Server</h1>");
+					sb.append("<xml><h1>Local Server</h1>");
 					sb.append("<ul>");
 					for(String page: pages.list()) {
 						sb.append("<li><a href=\"/xml?uuid="+ page +"\">"+ page +"</a></li>");
 					}
-					sb.append("</ul></html>");
+					sb.append("</ul></xml>");
 					
 					content = sb.toString();
 					type = MIME.APPLICATION_XML.getMime();
@@ -59,7 +59,7 @@ public class XmlController implements Controller {
 				if (resourceParameters.containsKey("xml")) {
 					pages.create(uuid, resourceParameters.get("xml"));
 					status = HTTPResponseStatus.S200;
-					content = "<html><a href=\"xml?uuid=" + uuid + "\">" + uuid + "</a></html>";
+					content = "<xml><a href=\"xml?uuid=" + uuid + "\">" + uuid + "</a></xml>";
 				} else {
 					status = HTTPResponseStatus.S400;
 				}

@@ -34,12 +34,12 @@ public class XsdController implements Controller {
 				
 				if (uuid == null) {
 					StringBuilder sb = new StringBuilder();
-					sb.append("<html><h1>Local Server</h1>");
+					sb.append("<xsd><h1>Local Server</h1>");
 					sb.append("<ul>");
 					for(String page: pages.list()) {
 						sb.append("<li><a href=\"/xsd?uuid="+ page +"\">"+ page +"</a></li>");
 					}
-					sb.append("</ul></html>");
+					sb.append("</ul></xsd>");
 					
 					content = sb.toString();
 					type = MIME.APPLICATION_XML.getMime();
@@ -62,7 +62,7 @@ public class XsdController implements Controller {
 				if (resourceParameters.containsKey("xsd")) {
 					pages.create(uuid, resourceParameters.get("xsd"));
 					status = HTTPResponseStatus.S200;
-					content = "<html><a href=\"xsd?uuid=" + uuid + "\">" + uuid + "</a></html>";
+					content = "<xsd><a href=\"xsd?uuid=" + uuid + "\">" + uuid + "</a></xsd>";
 					
 				} else {
 					status = HTTPResponseStatus.S400;

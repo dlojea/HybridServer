@@ -34,12 +34,12 @@ public class XsltController implements Controller {
 				
 				if (uuid == null) {
 					StringBuilder sb = new StringBuilder();
-					sb.append("<html><h1>Local Server</h1>");
+					sb.append("<xslt><h1>Local Server</h1>");
 					sb.append("<ul>");
 					for(String page: pages.list()) {
 						sb.append("<li><a href=\"/xslt?uuid="+ page +"\">"+ page +"</a></li>");
 					}
-					sb.append("</ul></html>");
+					sb.append("</ul></xslt>");
 					
 					content = sb.toString();
 					type = MIME.APPLICATION_XML.getMime();
@@ -65,7 +65,7 @@ public class XsltController implements Controller {
 					else {
 						pages.create(uuid, resourceParameters.get("xsd"), resourceParameters.get("xslt"));
 						status = HTTPResponseStatus.S200;
-						content = "<html><a href=\"xslt?uuid=" + uuid + "\">" + uuid + "</a></html>";
+						content = "<xslt><a href=\"xslt?uuid=" + uuid + "\">" + uuid + "</a></xslt>";
 					}
 				} else {
 					status = HTTPResponseStatus.S400;
