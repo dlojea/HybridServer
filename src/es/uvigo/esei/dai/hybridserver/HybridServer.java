@@ -16,6 +16,7 @@ public class HybridServer {
 	private int numClients;
 	private int port;
 	private Properties properties;
+	private Configuration config;
 	
 
 	public HybridServer() {
@@ -32,9 +33,11 @@ public class HybridServer {
 		this.port = Integer.parseInt(properties.getProperty("port"));
 		this.properties = properties;
 	}
-
-	public HybridServer(Configuration load) {
-		// TODO Auto-generated constructor stub
+	
+	public HybridServer(Configuration config) {
+		this.numClients = config.getNumClients();
+		this.port = config.getHttpPort();	
+		this.config = config;
 	}
 
 	public int getPort() {
@@ -51,7 +54,8 @@ public class HybridServer {
 						Socket socket = serverSocket.accept();
 						
 						if (stop) break;
-						threadPool.execute(new ServiceThread(socket, properties));	
+						//threadPool.execute(new ServiceThread(socket, properties));	
+						threadPool.execute(new ServiceThread(socket, config));	
 						
 							
 					}

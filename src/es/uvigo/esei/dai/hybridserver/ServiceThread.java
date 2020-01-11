@@ -30,11 +30,18 @@ public class ServiceThread implements Runnable {
 	private HTTPResponse response;
 	private String [] resources = {"html","xml","xsd","xslt"};
 	private Controller controller;
+	private Configuration config;
 	
 	public ServiceThread (Socket socket, Properties properties) {
 		this.socket = socket;
 		response = new HTTPResponse();
 		this.properties = properties;	
+	}
+	
+	public ServiceThread (Socket socket, Configuration config) {
+		this.socket = socket;
+		response = new HTTPResponse();
+		this.config = config;	
 	}
 	
 	public void setResponse (String content, String type, HTTPResponseStatus status) {
@@ -64,16 +71,16 @@ public class ServiceThread implements Runnable {
 				try {
 					switch (resourceName) {
 						case "html":
-							controller = new HtmlController (new HtmlDAO (properties));
+							controller = new HtmlController (new HtmlDAO (config)); //preguntar si properties y config deben convivir
 							break;
 						case "xml":
-							controller = new XmlController (new XmlDAO (properties));
+							controller = new XmlController (new XmlDAO (config));
 							break;
 						case "xsd":
-							controller = new XsdController (new XsdDAO (properties));
+							controller = new XsdController (new XsdDAO (config));
 							break;
 						case "xslt":
-							controller = new XsltController (new XsltDAO (properties));
+							controller = new XsltController (new XsltDAO (config));
 							break;
 					}
 					controller.setResponse(request);
