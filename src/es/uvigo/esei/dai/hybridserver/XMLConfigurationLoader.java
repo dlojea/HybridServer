@@ -71,8 +71,12 @@ public class XMLConfigurationLoader {
 			String service = server.getAttribute("service");
 			String httpAddress = server.getAttribute("httpAddress");
 			
-			ServerConfiguration serverConf = new ServerConfiguration(name,wsdl,namespace,service,httpAddress);
-			servers.add(serverConf);
+			if (name == "" | wsdl == "" | namespace == "" | service == "" | httpAddress == "") {
+				throw new java.lang.Exception();
+			} else {
+				ServerConfiguration serverConf = new ServerConfiguration(name,wsdl,namespace,service,httpAddress);
+				servers.add(serverConf);
+			}
 		}
 		
 		config = new Configuration(http,numClients,webservice,user,password,url,servers);
