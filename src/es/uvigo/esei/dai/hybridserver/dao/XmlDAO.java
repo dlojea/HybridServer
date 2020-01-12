@@ -142,7 +142,7 @@ public class XmlDAO {
 							statement2.setString(1, xsd);
 							try (ResultSet result2 = statement2.executeQuery()) {
 								if (result2.next()) {
-									return result2.getString("uuid");
+									return result2.getString("content");
 								} else {
 									return null;
 								}
@@ -170,6 +170,27 @@ public class XmlDAO {
 						return true;
 					} else {
 						return false;
+					}
+				}
+			}
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	public String getXslt(String uuid) {
+		try (Connection connection = DriverManager.getConnection(this.url, this.user, this.password)) {
+			try (PreparedStatement statement = connection.prepareStatement(
+					"SELECT * FROM XSLT WHERE uuid = ?"
+			)) {
+				
+				statement.setString(1, uuid);
+				
+				try (ResultSet result = statement.executeQuery()) {
+					if (result.next()) {
+						return result.getString("content");
+					} else {
+						return null; 
 					}
 				}
 			}
