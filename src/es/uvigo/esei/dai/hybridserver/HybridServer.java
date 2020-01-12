@@ -54,8 +54,8 @@ public class HybridServer {
 						Socket socket = serverSocket.accept();
 						
 						if (stop) break;
-						//threadPool.execute(new ServiceThread(socket, properties));	
-						threadPool.execute(new ServiceThread(socket, config));	
+						if(properties != null) threadPool.execute(new ServiceThread(socket, properties));	
+						else if (config !=null) threadPool.execute(new ServiceThread(socket, config));	
 						
 							
 					}
