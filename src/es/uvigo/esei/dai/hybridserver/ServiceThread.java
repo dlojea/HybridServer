@@ -69,24 +69,43 @@ public class ServiceThread implements Runnable {
 			
 			if (Arrays.asList(resources).contains(resourceName)) {
 				try {
-					switch (resourceName) {
-						case "html":
-							controller = new HtmlController (new HtmlDAO (config)); //preguntar si properties y config deben convivir
-							break;
-						case "xml":
-							controller = new XmlController (new XmlDAO (config));
-							break;
-						case "xsd":
-							controller = new XsdController (new XsdDAO (config));
-							break;
-						case "xslt":
-							controller = new XsltController (new XsltDAO (config));
-							break;
+					if (properties != null) {
+						switch (resourceName) {
+							case "html":
+								controller = new HtmlController (new HtmlDAO (properties));
+								break;
+							case "xml":
+								controller = new XmlController (new XmlDAO (properties));
+								break;
+							case "xsd":
+								controller = new XsdController (new XsdDAO (properties));
+								break;
+							case "xslt":
+								controller = new XsltController (new XsltDAO (properties));
+								break;
+						} 
+					} else if (config != null){
+						switch (resourceName) {
+							case "html":
+								controller = new HtmlController (new HtmlDAO (config));
+								break;
+							case "xml":
+								controller = new XmlController (new XmlDAO (config));
+								break;
+							case "xsd":
+								controller = new XsdController (new XsdDAO (config));
+								break;
+							case "xslt":
+								controller = new XsltController (new XsltDAO (config));
+								break;
+						} 
 					}
+					
 					controller.setResponse(request);
 					setResponse(controller.getContent(), controller.getType(), controller.getStatus());
 					
 				} catch (Exception e) {
+					e.printStackTrace();
 					setResponse(HTTPResponseStatus.S500);
 				}
 				
