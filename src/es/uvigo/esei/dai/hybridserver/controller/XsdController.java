@@ -63,7 +63,7 @@ public class XsdController implements Controller {
 									sb.append("<h1>" + server.getName() + "</h1>");
 									sb.append("<ul>");
 									for (String page : webService.listXsd()) {
-										sb.append("<li><a href=\"/xsd?uuid="+ page +"\">"+ page +"</a></li>");
+										sb.append("<li><a href=\"" + server.getHttpAddress() + "xsd?uuid="+ page +"\">"+ page +"</a></li>");
 									}
 									sb.append("</ul>");
 								}

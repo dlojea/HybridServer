@@ -64,7 +64,7 @@ public class HtmlController implements Controller{
 									sb.append("<h1>" + server.getName() + "</h1>");
 									sb.append("<ul>");
 									for (String page : webService.listHtml()) {
-										sb.append("<li><a href=\"/html?uuid="+ page +"\">"+ page +"</a></li>");
+										sb.append("<li><a href=\""+ server.getHttpAddress() + "html?uuid="+ page +"\">"+ page +"</a></li>");
 									}
 									sb.append("</ul>");
 								}

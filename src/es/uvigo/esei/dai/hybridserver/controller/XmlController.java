@@ -83,7 +83,7 @@ public class XmlController implements Controller {
 									sb.append("<h1>" + server.getName() + "</h1>");
 									sb.append("<ul>");
 									for (String page : webService.listXml()) {
-										sb.append("<li><a href=\"/xml?uuid="+ page +"\">"+ page +"</a></li>");
+										sb.append("<li><a href=\"" + server.getHttpAddress() + "xml?uuid="+ page +"\">"+ page +"</a></li>");
 									}
 									sb.append("</ul>");
 								}
