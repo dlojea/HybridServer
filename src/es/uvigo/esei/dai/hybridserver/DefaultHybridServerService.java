@@ -47,7 +47,7 @@ public class DefaultHybridServerService implements HybridServerService {
 
 	@Override
 	public String getUuidXsd(String UuidXslt) {
-		return xmlDAO.getSchema(UuidXslt);
+		return xsltDAO.getXsd(UuidXslt);
 	}
 
 	@Override
