@@ -146,5 +146,26 @@ public class XsltDAO {
 			throw new RuntimeException(e);
 		}
 	}
+	
+	public String getXsd (String uuid) {
+		try (Connection connection = DriverManager.getConnection(this.url, this.user, this.password)) {
+			try (PreparedStatement statement = connection.prepareStatement(
+					"SELECT * FROM XSLT WHERE uuid = ?"
+			)) {
+				
+				statement.setString(1, uuid);
+				
+				try (ResultSet result = statement.executeQuery()) {
+					if (result.next()) {
+						return result.getString("xsd");
+					} else {
+						return null; 
+					}
+				}
+			}
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 }
