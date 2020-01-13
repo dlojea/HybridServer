@@ -43,8 +43,13 @@ public class ServiceThread implements Runnable {
 	public ServiceThread (Socket socket, Configuration config) {
 		this.socket = socket;
 		response = new HTTPResponse();
-		this.config = config;
-		this.servers = config.getServers();
+		if (config != null) {
+			this.config = config;
+			this.servers = config.getServers();
+		} else {
+			this.config = new Configuration();
+			this.servers = this.config.getServers();
+		}
 	}
 	
 	public void setResponse (String content, String type, HTTPResponseStatus status) {
@@ -72,37 +77,21 @@ public class ServiceThread implements Runnable {
 			
 			if (Arrays.asList(resources).contains(resourceName)) {
 				try {
-					if (properties != null) {
-						switch (resourceName) {
-							case "html":
-								controller = new HtmlController (new HtmlDAO (properties));
-								break;
-							case "xml":
-								controller = new XmlController (new XmlDAO (properties));
-								break;
-							case "xsd":
-								controller = new XsdController (new XsdDAO (properties));
-								break;
-							case "xslt":
-								controller = new XsltController (new XsltDAO (properties));
-								break;
-						} 
-					} else if (config != null){
-						switch (resourceName) {
-							case "html":
-								controller = new HtmlController (new HtmlDAO (config), servers);
-								break;
-							case "xml":
-								controller = new XmlController (new XmlDAO (config), servers);
-								break;
-							case "xsd":
-								controller = new XsdController (new XsdDAO (config), servers);
-								break;
-							case "xslt":
-								controller = new XsltController (new XsltDAO (config), servers);
-								break;
-						} 
-					}
+					switch (resourceName) {
+						case "html":
+							controller = new HtmlController (new HtmlDAO (config), servers);
+							break;
+						case "xml":
+							controller = new XmlController (new XmlDAO (config), servers);
+							break;
+						case "xsd":
+							controller = new XsdController (new XsdDAO (config), servers);
+							break;
+						case "xslt":
+							controller = new XsltController (new XsltDAO (config), servers);
+							break;
+					} 
+					
 					controller.setResponse(request);
 					setResponse(controller.getContent(), controller.getType(), controller.getStatus());
 					
