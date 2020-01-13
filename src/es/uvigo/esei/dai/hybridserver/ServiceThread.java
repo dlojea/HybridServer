@@ -5,6 +5,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 import es.uvigo.esei.dai.hybridserver.controller.Controller;
@@ -31,6 +32,7 @@ public class ServiceThread implements Runnable {
 	private String [] resources = {"html","xml","xsd","xslt"};
 	private Controller controller;
 	private Configuration config;
+	private List<ServerConfiguration> servers;
 	
 	public ServiceThread (Socket socket, Properties properties) {
 		this.socket = socket;
@@ -41,7 +43,8 @@ public class ServiceThread implements Runnable {
 	public ServiceThread (Socket socket, Configuration config) {
 		this.socket = socket;
 		response = new HTTPResponse();
-		this.config = config;	
+		this.config = config;
+		this.servers = config.getServers();
 	}
 	
 	public void setResponse (String content, String type, HTTPResponseStatus status) {
@@ -87,16 +90,16 @@ public class ServiceThread implements Runnable {
 					} else if (config != null){
 						switch (resourceName) {
 							case "html":
-								controller = new HtmlController (new HtmlDAO (config));
+								controller = new HtmlController (new HtmlDAO (config), servers);
 								break;
 							case "xml":
-								controller = new XmlController (new XmlDAO (config));
+								controller = new XmlController (new XmlDAO (config), servers);
 								break;
 							case "xsd":
-								controller = new XsdController (new XsdDAO (config));
+								controller = new XsdController (new XsdDAO (config), servers);
 								break;
 							case "xslt":
-								controller = new XsltController (new XsltDAO (config));
+								controller = new XsltController (new XsltDAO (config), servers);
 								break;
 						} 
 					}
