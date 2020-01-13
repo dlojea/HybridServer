@@ -36,12 +36,9 @@ public class HybridServer {
 	private Endpoint endpoint;
 
 	public HybridServer() {
-		this.numClients = 50;
-		this.port = 8888;
-		this.properties = new Properties();
-		this.properties.put("db.url", "jdbc:mysql://localhost:3306/hstestdb");
-		this.properties.put("db.user", "hsdb");
-		this.properties.put("db.password", "hsdbpass");
+		this.config = new Configuration();
+		this.numClients = config.getNumClients();
+		this.port = config.getHttpPort();
 	}
 
 	public HybridServer(Properties properties) {
@@ -77,9 +74,7 @@ public class HybridServer {
 						Socket socket = serverSocket.accept();
 						
 						if (stop) break;
-						if(properties != null) threadPool.execute(new ServiceThread(socket, properties));	
-						else if (config !=null) threadPool.execute(new ServiceThread(socket, config));	
-					
+						threadPool.execute(new ServiceThread(socket, config));	
 							
 					}
 				} catch (IOException e) {
