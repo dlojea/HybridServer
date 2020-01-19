@@ -180,8 +180,6 @@ public class XmlController implements Controller {
 					
 					//Si existen los tres archivos, el xml se valida con el xsd y se transforma con el xslt
 					if (xmlContent != null && xsltContent != null && xsdContent != null) {
-						System.out.println("---------------DEBUG-----------------------");
-
 						if (this.validateAgainstXSD(xmlContent, xsdContent)) {
 							try {
 								content = this.transformXML(xmlContent, xsltContent);

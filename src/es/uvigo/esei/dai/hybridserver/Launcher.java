@@ -32,18 +32,18 @@ public class Launcher {
 				e.printStackTrace();
 			}
 			
-			Configuration conf = new Configuration();
+			Configuration config = new Configuration();
 			XMLConfigurationLoader xmlLoader = new XMLConfigurationLoader();
 	
 			if (validateAgainstXSD(xmlStream, xsdStream)) {
 				try {
 					File xml = new File(args[0]);
-					conf = xmlLoader.load(xml);
+					config = xmlLoader.load(xml);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				new HybridServer(conf).start();
+				new HybridServer(config).start();
 			} else {
 				System.out.println("Error: fallo al validar el archivo de configuracion");
 			}
