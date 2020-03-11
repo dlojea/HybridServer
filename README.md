@@ -1,8 +1,3 @@
 # HybridServer
 
-Grupo 2.3
-
-Autores:
-
-	Daniel López Ojea 44664601G
-	Jordan Oreiro Vieites 44844497V
+> Sistema híbrido cliente/servidor y P2P para la gestión de documentos estructurados (HTML y XML). Realizado para la asginatura Desenvolvemento de Aplicacións para Internet.
